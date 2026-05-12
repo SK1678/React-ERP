@@ -1,0 +1,325 @@
+:root {
+  /* Default Dark Mode (Corona Default) */
+  --bg-color: #000000;
+  --text-color: #ffffff;
+  --text-muted: #6c7293;
+  --border-color: #2c2e33;
+  --card-bg: #191c24;
+  --sidebar-bg: #191c24;
+  --navbar-bg: #191c24;
+  --input-bg: #2a3038;
+  --input-color: #ffffff;
+  --dropdown-bg: #191c24;
+  --footer-bg: #000000;
+  --body-color: #ffffff;
+  --hover-bg: rgba(255, 255, 255, 0.1);
+}
+
+body.light-mode {
+  /* Light Mode */
+  --bg-color: #fcf5e7;
+  --text-color: #1f1f1f;
+  --text-muted: #6c7293;
+  --border-color: #e4e4e4;
+  --card-bg: #ffffff;
+  --sidebar-bg: #fff1d1;
+  --navbar-bg: #fff1d1;
+  --input-bg: #f8f9fa;
+  --input-color: #495057;
+  --dropdown-bg: #ffffff;
+  --footer-bg: #fff1d1;
+  --body-color: #1f1f1f;
+  --hover-bg: rgba(0, 0, 0, 0.05);
+}
+
+
+/* Base style overrides to use variables */
+body {
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
+}
+
+.main-panel,
+.content-wrapper {
+  background: var(--bg-color) !important;
+}
+
+.card {
+  background-color: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-color) !important;
+
+  .card-title {
+    color: var(--text-color) !important;
+  }
+}
+
+.sidebar {
+  background: var(--sidebar-bg) !important;
+  height: 100vh !important;
+  position: fixed !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 244px !important;
+  z-index: 1030 !important;
+  overflow-y: auto !important;
+  transition: all 0.3s ease;
+
+  /* Custom Scrollbar for Sidebar */
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+  }
+
+  .nav {
+    .nav-item {
+      .nav-link {
+        color: var(--text-color) !important;
+
+        i {
+          color: var(--text-muted) !important;
+        }
+
+        &:hover {
+          background-color: var(--hover-bg) !important;
+          color: var(--text-color) !important;
+        }
+      }
+
+      &.active>.nav-link {
+        background: var(--bg-color) !important;
+        color: var(--text-color) !important;
+
+        .menu-title {
+          color: var(--text-color) !important;
+        }
+
+        i {
+          color: var(--text-color) !important;
+        }
+      }
+
+      /* Handle expanded/menu-open state */
+      &.nav-category {
+        border-top: 1px solid var(--border-color) !important;
+
+        .nav-link {
+          color: var(--text-muted) !important;
+        }
+      }
+
+      .menu-expanded {
+        background: transparent !important;
+      }
+
+
+      .sub-menu {
+        background: transparent !important;
+
+        .nav-item .nav-link {
+          color: var(--text-muted) !important;
+
+          &:hover,
+          &.active {
+            color: var(--text-color) !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+.page-body-wrapper {
+  padding-left: 244px !important;
+  min-height: 100vh !important;
+  width: 100% !important;
+  @media (max-width: 991px) {
+    padding-left: 0 !important;
+  }
+}
+
+.navbar.fixed-top {
+  left: 244px !important;
+  width: calc(100% - 244px) !important;
+  z-index: 1029 !important;
+  @media (max-width: 991px) {
+    left: 0 !important;
+    width: 100% !important;
+  }
+}
+
+/* Global Smooth Scroll and Custom Scrollbar */
+html {
+  scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-color);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+
+
+.navbar {
+  background: var(--navbar-bg) !important;
+
+  .navbar-menu-wrapper {
+    color: var(--text-color);
+  }
+}
+
+.footer {
+  background: var(--footer-bg) !important;
+  color: var(--text-muted) !important;
+}
+
+.form-control,
+.form-control:focus {
+  background-color: var(--input-bg) !important;
+  color: var(--input-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+.dropdown-menu {
+  background-color: var(--dropdown-bg) !important;
+  border-color: var(--border-color) !important;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+
+  .dropdown-item {
+    color: var(--text-color) !important;
+
+    &:hover {
+      background-color: var(--hover-bg) !important;
+    }
+  }
+
+  .dropdown-header,
+  h6 {
+    color: var(--text-color) !important;
+    background-color: var(--dropdown-bg) !important;
+  }
+
+  .preview-item {
+    border-bottom: 1px solid var(--border-color) !important;
+
+    &:last-child {
+      border-bottom: none !important;
+    }
+
+    .preview-subject,
+    h6 {
+      color: var(--text-color) !important;
+    }
+
+    .text-muted {
+      color: var(--text-muted) !important;
+    }
+
+    .preview-thumbnail .preview-icon {
+      background-color: var(--bg-color) !important;
+    }
+
+    &:hover {
+      background-color: var(--hover-bg) !important;
+    }
+  }
+
+  p.p-3.mb-0.text-center {
+    color: var(--text-color) !important;
+    background-color: var(--dropdown-bg) !important;
+  }
+
+  .dropdown-divider {
+    background-color: var(--border-color) !important;
+    margin: 0;
+  }
+}
+
+
+
+.table {
+  color: var(--text-color) !important;
+
+  th,
+  td {
+    border-top: 1px solid var(--border-color) !important;
+  }
+
+  &.table-hover tbody tr:hover {
+    background-color: var(--hover-bg) !important;
+    color: var(--text-color) !important;
+  }
+}
+
+.page-title {
+  color: var(--text-color) !important;
+}
+
+.breadcrumb {
+  background: transparent !important;
+
+  .breadcrumb-item {
+    color: var(--text-muted) !important;
+
+    a {
+      color: var(--text-muted) !important;
+    }
+
+    &.active {
+      color: var(--text-color) !important;
+    }
+  }
+}
+
+/* Dashboard Specific Fixes */
+.bg-gray-dark {
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
+
+  h6,
+  p {
+    color: var(--text-color) !important;
+  }
+
+  .text-muted {
+    color: var(--text-muted) !important;
+  }
+}
+
+.center-content {
+  h5 {
+    color: var(--text-color) !important;
+  }
+}
+
+.corona-gradient-card {
+  .card-body {
+
+    h4,
+    p {
+      color: #ffffff !important;
+      /* Keep white on gradient */
+    }
+  }
+}
