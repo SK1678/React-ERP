@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { Trans } from 'react-i18next';
+import i18n from '../../i18n';
 
 class Navbar extends Component {
   constructor(props) {
@@ -36,6 +37,11 @@ class Navbar extends Component {
   toggleRightSidebar() {
     document.querySelector('.right-sidebar').classList.toggle('open');
   }
+
+  changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+  }
+
   render () {
     return (
       <nav className="navbar p-0 fixed-top d-flex flex-row">
@@ -98,6 +104,43 @@ class Navbar extends Component {
                   <p className="p-3 mb-0 text-center"><Trans>See all projects</Trans></p>
                 </Dropdown.Menu>
               </Dropdown>
+            <Dropdown alignRight as="li" className="nav-item border-left">
+              <Dropdown.Toggle as="a" className="nav-link cursor-pointer no-caret">
+                <div className="navbar-profile">
+                  <i className="mdi mdi-earth"></i>
+                  <p className="mb-0 d-none d-sm-block navbar-profile-name ml-2">
+                    {i18n.language === 'ar' ? 'عربى' : 'English'}
+                  </p>
+                  <i className="mdi mdi-menu-down d-none d-sm-block"></i>
+                </div>
+              </Dropdown.Toggle>
+              <Dropdown.Menu className="navbar-dropdown preview-list navbar-profile-dropdown-menu">
+                <h6 className="p-3 mb-0"><Trans>Language</Trans></h6>
+                <Dropdown.Divider />
+                <Dropdown.Item onClick={() => this.changeLanguage('en')} className="preview-item">
+                  <div className="preview-thumbnail">
+                    <div className="preview-icon bg-dark rounded-circle">
+                      <i className="mdi mdi-alphabetical text-primary"></i>
+                    </div>
+                  </div>
+                  <div className="preview-item-content">
+                    <p className="preview-subject mb-1">English</p>
+                  </div>
+                </Dropdown.Item>
+                <Dropdown.Divider />
+                <Dropdown.Item onClick={() => this.changeLanguage('ar')} className="preview-item">
+                  <div className="preview-thumbnail">
+                    <div className="preview-icon bg-dark rounded-circle">
+                      <i className="mdi mdi-alphabetical text-danger"></i>
+                    </div>
+                  </div>
+                  <div className="preview-item-content">
+                    <p className="preview-subject mb-1">Arabic (عربى)</p>
+                  </div>
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+
             <li className="nav-item border-left">
               <a className="nav-link cursor-pointer" href="!#" onClick={event => { event.preventDefault(); this.toggleTheme(); }}>
                 <i className={`mdi ${this.state.isLightMode ? 'mdi-weather-night' : 'mdi-weather-sunny'}`}></i>

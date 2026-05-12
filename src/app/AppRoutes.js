@@ -33,6 +33,7 @@ const RegisterUser = lazy(() => import('./user-pages/RegisterUser'));
 
 const CompanyList = lazy(() => import('./master/CompanyList'));
 
+
 class AppRoutes extends Component {
   render() {
     return (

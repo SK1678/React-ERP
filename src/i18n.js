@@ -215,7 +215,30 @@ i18n
                 "Software Development": "تطوير البرمجيات",
                 "UI Development": "تطوير واجهة المستخدم",
                 "Software Testing":"اختبار البرمجيات",
-                "See all projects": "رؤية جميع المشاريع"
+                "See all projects": "رؤية جميع المشاريع",
+
+                "Company": "شركات",
+                "Add New Company": "إضافة شركة جديدة",
+                "Edit Company": "تعديل الشركة",
+                "Company Name": "اسم الشركة",
+                "Owner Name": "اسم المالك",
+                "Country": "دولة",
+                "State/Division": "الولاية / القسم",
+                "City/District": "المدينة / الحي",
+                "Address": "عنوان",
+                "Phone": "هاتف",
+                "TIN": "رقم التعريف الضريبي",
+                "BIN": "رقم تعريف الأعمال",
+                "NID Number": "رقم الهوية الوطنية",
+                "Is Active": "نشط",
+                "Company Logo": "شعار الشركة",
+                "Owner Photo": "صورة المالك",
+                "Favicon": "أيقونة المفضلة",
+                "Trade License": "الرخصة التجارية",
+                "Default Language": "اللغة الافتراضية",
+                "Save Company": "حفظ الشركة",
+                "Update Company": "تحديث الشركة",
+                "Language": "لغة"
             }
           }
       },

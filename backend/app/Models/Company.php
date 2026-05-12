@@ -10,6 +10,9 @@ class Company extends Model
         'name',
         'address',
         'country',
+        'state',
+        'city',
+        'default_language',
         'tin',
         'bin',
         'phone',
@@ -17,7 +20,7 @@ class Company extends Model
         'logo',
         'owner_name',
         'nid',
-        'image',
+        'favicon',
         'photo',
         'trade_license'
     ];

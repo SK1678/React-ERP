@@ -3,7 +3,10 @@
  * The base URL for all backend communication.
  * Make sure your Laravel server is running on this port (e.g., php artisan serve --port=8001)
  */
-const API_URL = 'http://localhost:8001/api';
+const BASE_URL = 'http://localhost:8001';
+const API_URL = `${BASE_URL}/api`;
+
+export { BASE_URL, API_URL };
 
 /**
  * CORE FETCH WRAPPER
@@ -31,7 +34,18 @@ const callApi = async (endpoint, options = {}) => {
 
     // Handle HTTP errors (4xx, 5xx)
     if (!response.ok) {
-      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      let errorMsg = `API Error: ${response.status} ${response.statusText}`;
+      try {
+        const errorData = await response.json();
+        if (errorData && errorData.error) {
+          errorMsg += ` - ${errorData.error}`;
+        } else if (errorData && errorData.message) {
+          errorMsg += ` - ${errorData.message}`;
+        }
+      } catch (e) {
+        // Fallback if body is not JSON
+      }
+      throw new Error(errorMsg);
     }
 
     return await response.json();
@@ -132,6 +146,7 @@ export const ApiManager = {
      ======================================================================== */
 
   getCompanies: () => callApi('/companies'),
+  getCompany: (id) => callApi(`/companies/${id}`),
   
   createCompany: (data) => callApi('/companies', { 
     method: 'POST', 
