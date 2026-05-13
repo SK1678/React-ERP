@@ -16,3 +16,5 @@ Route::get('/users', function () {
 
 Route::apiResource('companies', \App\Http\Controllers\Api\CompanyController::class);
 Route::apiResource('stores', \App\Http\Controllers\Api\StoreController::class);
+Route::apiResource('departments', \App\Http\Controllers\DepartmentController::class);
+Route::apiResource('designations', \App\Http\Controllers\DesignationController::class);

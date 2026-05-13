@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Form, Modal, Button } from 'react-bootstrap';
 import { Trans } from 'react-i18next';
-import { ApiManager, BASE_URL } from '../services/api';
+import ApiManager, { BASE_URL } from '../services/api';
 import { COUNTRY_LIST, LOCATION_DATA } from '../../locationData';
 
 export class CompanyList extends Component {
@@ -182,8 +182,18 @@ export class CompanyList extends Component {
   handleSave = () => {
     const { editMode, currentCompany } = this.state;
 
+    // Clean up system fields that should not be sent to the API
+    const { 
+      createdAt, 
+      updatedAt, 
+      created_at, 
+      updated_at, 
+      id, 
+      ...payload 
+    } = currentCompany;
+
     if (editMode) {
-      ApiManager.updateCompany(currentCompany.id, currentCompany)
+      ApiManager.updateCompany(currentCompany.id, payload)
         .then(() => {
           this.fetchCompanies();
           this.handleToggleModal();
@@ -194,10 +204,7 @@ export class CompanyList extends Component {
           alert('Update failed: ' + cleanError);
         });
     } else {
-      // Remove empty id to prevent database errors
-      const { id, ...dataToSave } = currentCompany;
-      // alert('Sending data: ' + JSON.stringify(dataToSave).substring(0, 500) + '...');
-      ApiManager.createCompany(dataToSave)
+      ApiManager.createCompany(payload)
         .then(() => {
           this.fetchCompanies();
           this.handleToggleModal();
@@ -480,14 +487,14 @@ export class CompanyList extends Component {
                   <div className="col-6">
                     <small className="text-muted">
                       Created: {this.state.currentCompany.createdAt && this.state.currentCompany.createdAt.includes('T')
-                        ? new Date(this.state.currentCompany.createdAt).toLocaleDateString()
+                        ? new Date(this.state.currentCompany.createdAt).toLocaleString()
                         : this.state.currentCompany.createdAt}
                     </small>
                   </div>
                   <div className="col-6 text-right">
                     <small className="text-muted">
                       Updated: {this.state.currentCompany.updatedAt && this.state.currentCompany.updatedAt.includes('T')
-                        ? new Date(this.state.currentCompany.updatedAt).toLocaleDateString()
+                        ? new Date(this.state.currentCompany.updatedAt).toLocaleString()
                         : this.state.currentCompany.updatedAt}
                     </small>
                   </div>

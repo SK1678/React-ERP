@@ -1,39 +1,61 @@
 import React, { Component } from 'react';
 import { Form, Modal, Button } from 'react-bootstrap';
+import ApiManager from '../services/api';
 
-export class DepartmentList extends Component {
+class DepartmentList extends Component {
   constructor(props) {
     super(props);
     this.state = {
       showModal: false,
       editMode: false,
-      departments: [
-        { id: 1, name: 'IT Department', parent: 'None', manager: 'Henry Klein', status: 'Active' },
-        { id: 2, name: 'Software Development', parent: 'IT Department', manager: 'Lucy Abbott', status: 'Active' }
-      ],
+      loading: true,
+      departments: [],
       currentDept: {
         id: '',
         name: '',
         parent: '',
         manager: '',
         isActive: true,
-        createdAt: new Date().toLocaleDateString(),
-        updatedAt: new Date().toLocaleDateString()
+        createdAt: '',
+        updatedAt: ''
       }
     };
   }
 
+  componentDidMount() {
+    this.fetchDepartments();
+  }
+
+  fetchDepartments = () => {
+    this.setState({ loading: true });
+    ApiManager.getDepartments()
+      .then(data => {
+        this.setState({ departments: Array.isArray(data) ? data : [], loading: false });
+      })
+      .catch(err => {
+        console.error('Failed to fetch departments:', err);
+        this.setState({ loading: false, departments: [] });
+      });
+  }
+
   handleToggleModal = (edit = false, dept = null) => {
     if (edit && dept) {
-      this.setState({ showModal: true, editMode: true, currentDept: { ...dept } });
+      this.setState({
+        showModal: true,
+        editMode: true,
+        currentDept: {
+          ...dept,
+          isActive: dept.status === 'Active',
+          createdAt: dept.created_at ? new Date(dept.created_at).toLocaleString() : '',
+          updatedAt: dept.updated_at ? new Date(dept.updated_at).toLocaleString() : ''
+        }
+      });
     } else {
-      this.setState({ 
-        showModal: !this.state.showModal, 
+      this.setState({
+        showModal: !this.state.showModal,
         editMode: false,
         currentDept: {
-          id: '', name: '', parent: '', manager: '', isActive: true,
-          createdAt: new Date().toLocaleDateString(),
-          updatedAt: new Date().toLocaleDateString()
+          id: '', name: '', parent: '', manager: '', isActive: true, createdAt: '', updatedAt: ''
         }
       });
     }
@@ -49,14 +71,51 @@ export class DepartmentList extends Component {
     });
   }
 
+  handleSave = () => {
+    const { editMode, currentDept } = this.state;
+
+    const payload = {
+      name: currentDept.name,
+      parent: currentDept.parent,
+      manager: currentDept.manager,
+      status: currentDept.isActive ? 'Active' : 'Inactive'
+    };
+
+    if (editMode) {
+      ApiManager.updateDepartment(currentDept.id, payload)
+        .then(() => {
+          this.fetchDepartments();
+          this.handleToggleModal();
+        })
+        .catch(err => console.error('Update failed:', err));
+    } else {
+      ApiManager.createDepartment(payload)
+        .then(() => {
+          this.fetchDepartments();
+          this.handleToggleModal();
+        })
+        .catch(err => console.error('Create failed:', err));
+    }
+  }
+
+  handleDelete = (id) => {
+    if (window.confirm('Are you sure you want to delete this department?')) {
+      ApiManager.deleteDepartment(id)
+        .then(() => this.fetchDepartments())
+        .catch(err => console.error('Delete failed:', err));
+    }
+  }
+
   render() {
+    const { loading, departments, showModal, editMode, currentDept } = this.state;
+
     return (
       <div>
         <div className="page-header">
           <h3 className="page-title"> Department List </h3>
           <nav aria-label="breadcrumb">
             <ol className="breadcrumb">
-              <li className="breadcrumb-item"><a href="!#" onClick={event => event.preventDefault()}>Master</a></li>
+              <li className="breadcrumb-item"><a href="!#" onClick={e => e.preventDefault()}>Master</a></li>
               <li className="breadcrumb-item active" aria-current="page">Department</li>
             </ol>
           </nav>
@@ -72,7 +131,7 @@ export class DepartmentList extends Component {
                     <i className="mdi mdi-plus btn-icon-prepend"></i> Add New Department
                   </button>
                 </div>
-                
+
                 <div className="table-responsive">
                   <table className="table table-hover">
                     <thead>
@@ -86,27 +145,49 @@ export class DepartmentList extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {this.state.departments.map((dept) => (
-                        <tr key={dept.id}>
-                          <td>{dept.id}</td>
-                          <td>{dept.name}</td>
-                          <td>{dept.parent}</td>
-                          <td>{dept.manager}</td>
-                          <td>
-                             <label className={`badge badge-${dept.status === 'Active' ? 'success' : 'danger'}`}>
-                                {dept.status}
-                             </label>
-                          </td>
-                          <td>
-                            <button type="button" className="btn btn-outline-warning btn-sm mr-2" onClick={() => this.handleToggleModal(true, dept)}>
-                              Edit
-                            </button>
-                            <button type="button" className="btn btn-outline-danger btn-sm">
-                              Delete
-                            </button>
+                      {loading ? (
+                        <tr>
+                          <td colSpan="6" className="text-center py-5">
+                            <div className="spinner-border text-primary" role="status">
+                              <span className="sr-only">Loading...</span>
+                            </div>
                           </td>
                         </tr>
-                      ))}
+                      ) : departments.length > 0 ? (
+                        departments.map(dept => (
+                          <tr key={dept.id}>
+                            <td>{dept.id}</td>
+                            <td>{dept.name}</td>
+                            <td>{dept.parent || '—'}</td>
+                            <td>{dept.manager || '—'}</td>
+                            <td>
+                              <label className={`badge badge-${dept.status === 'Active' ? 'success' : 'danger'}`}>
+                                {dept.status}
+                              </label>
+                            </td>
+                            <td>
+                              <button
+                                type="button"
+                                className="btn btn-outline-warning btn-sm mr-2"
+                                onClick={() => this.handleToggleModal(true, dept)}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                type="button"
+                                className="btn btn-outline-danger btn-sm"
+                                onClick={() => this.handleDelete(dept.id)}
+                              >
+                                Delete
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="6" className="text-center py-5 text-muted">No departments found. Click "Add New Department" to create one.</td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -116,9 +197,9 @@ export class DepartmentList extends Component {
         </div>
 
         {/* Add/Edit Modal */}
-        <Modal show={this.state.showModal} onHide={() => this.handleToggleModal()} centered>
+        <Modal show={showModal} onHide={() => this.handleToggleModal()} centered>
           <Modal.Header closeButton className="bg-gray-dark">
-            <Modal.Title>{this.state.editMode ? 'Edit Department' : 'Add New Department'}</Modal.Title>
+            <Modal.Title>{editMode ? 'Edit Department' : 'Add New Department'}</Modal.Title>
           </Modal.Header>
           <Modal.Body className="bg-gray-dark">
             <Form>
@@ -128,45 +209,64 @@ export class DepartmentList extends Component {
               </Form.Group>
               <Form.Group>
                 <label>Department Name</label>
-                <Form.Control type="text" name="name" value={this.state.currentDept.name} onChange={this.handleInputChange} placeholder="Enter Name" />
+                <Form.Control
+                  type="text"
+                  name="name"
+                  value={currentDept.name}
+                  onChange={this.handleInputChange}
+                  placeholder="Enter Department Name"
+                />
               </Form.Group>
               <Form.Group>
                 <label>Parent Department</label>
-                <select className="form-control" name="parent" value={this.state.currentDept.parent} onChange={this.handleInputChange}>
+                <select className="form-control" name="parent" value={currentDept.parent} onChange={this.handleInputChange}>
                   <option value="">None</option>
-                  {this.state.departments.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
+                  {departments.filter(d => d.id !== currentDept.id).map(d => (
+                    <option key={d.id} value={d.name}>{d.name}</option>
+                  ))}
                 </select>
               </Form.Group>
               <Form.Group>
                 <label>Manager</label>
-                <select className="form-control" name="manager" value={this.state.currentDept.manager} onChange={this.handleInputChange}>
-                  <option value="">Select Manager</option>
-                  <option value="Henry Klein">Henry Klein</option>
-                  <option value="Lucy Abbott">Lucy Abbott</option>
-                  <option value="Peter Gill">Peter Gill</option>
-                </select>
+                <Form.Control
+                  type="text"
+                  name="manager"
+                  value={currentDept.manager}
+                  onChange={this.handleInputChange}
+                  placeholder="Enter Manager Name"
+                />
               </Form.Group>
               <div className="form-check mt-3">
                 <label className="form-check-label">
-                  <input type="checkbox" className="form-check-input" name="isActive" checked={this.state.currentDept.isActive} onChange={this.handleInputChange} /> Is Active <i className="input-helper"></i>
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    name="isActive"
+                    checked={currentDept.isActive}
+                    onChange={this.handleInputChange}
+                  /> Is Active <i className="input-helper"></i>
                 </label>
               </div>
 
-              <div className="row mt-4 pt-3 border-top border-secondary">
-                <div className="col-6">
-                  <small className="text-muted">Created: </small>
-                  <span className="small font-weight-bold">{this.state.currentDept.createdAt}</span>
+              {editMode && (
+                <div className="row mt-4 pt-3 border-top border-secondary">
+                  <div className="col-6">
+                    <small className="text-muted">Created: </small>
+                    <span className="small font-weight-bold">{currentDept.createdAt}</span>
+                  </div>
+                  <div className="col-6 text-right">
+                    <small className="text-muted">Updated: </small>
+                    <span className="small font-weight-bold">{currentDept.updatedAt}</span>
+                  </div>
                 </div>
-                <div className="col-6 text-right">
-                  <small className="text-muted">Updated: </small>
-                  <span className="small font-weight-bold">{this.state.currentDept.updatedAt}</span>
-                </div>
-              </div>
+              )}
             </Form>
           </Modal.Body>
           <Modal.Footer className="bg-gray-dark border-top-0">
             <Button variant="secondary" onClick={() => this.handleToggleModal()}>Cancel</Button>
-            <Button variant="primary" onClick={() => this.handleToggleModal()}>Save</Button>
+            <Button variant="primary" onClick={this.handleSave}>
+              {editMode ? 'Update Department' : 'Save Department'}
+            </Button>
           </Modal.Footer>
         </Modal>
       </div>

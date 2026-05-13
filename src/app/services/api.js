@@ -162,6 +162,48 @@ export const ApiManager = {
     method: 'DELETE' 
   }),
 
+  /* ========================================================================
+     DEPARTMENT MANAGEMENT
+     ======================================================================== */
+
+  getDepartments: () => callApi('/departments'),
+  getDepartment: (id) => callApi(`/departments/${id}`),
+  
+  createDepartment: (data) => callApi('/departments', { 
+    method: 'POST', 
+    body: JSON.stringify(data) 
+  }),
+  
+  updateDepartment: (id, data) => callApi(`/departments/${id}`, { 
+    method: 'PUT', 
+    body: JSON.stringify(data) 
+  }),
+  
+  deleteDepartment: (id) => callApi(`/departments/${id}`, { 
+    method: 'DELETE' 
+  }),
+
+  /* ========================================================================
+     DESIGNATION MANAGEMENT
+     ======================================================================== */
+
+  getDesignations: () => callApi('/designations'),
+  getDesignation: (id) => callApi(`/designations/${id}`),
+  
+  createDesignation: (data) => callApi('/designations', { 
+    method: 'POST', 
+    body: JSON.stringify(data) 
+  }),
+  
+  updateDesignation: (id, data) => callApi(`/designations/${id}`, { 
+    method: 'PUT', 
+    body: JSON.stringify(data) 
+  }),
+  
+  deleteDesignation: (id) => callApi(`/designations/${id}`, { 
+    method: 'DELETE' 
+  }),
+
 };
 
 export default ApiManager;
